@@ -2,11 +2,13 @@
 # !/usr/bin/env python
 
 import sys, os
+
 sys.path.append("Src")
 
 from Util.utilClass import ConfigParse
 from pymongo import MongoClient
 from Notify.NotifyManager import register_event, NOTIFY_EVENT
+
 
 def is_number(s):
     result = False
@@ -25,6 +27,7 @@ def is_number(s):
             pass
 
     return result
+
 
 class BaseConfig(object):
     config_name = "Config.ini"
@@ -57,33 +60,36 @@ class BaseConfig(object):
 
     def load_setting(self):
         for section in self.config.sections():
-            for item  in self.config.items(section): 
-                field = item[0] 
-                value = int(item[1]) if is_number(item[1]) else item[1] 
+            for item in self.config.items(section):
+                field = item[0]
+                value = int(item[1]) if is_number(item[1]) else item[1]
                 self.setting[field] = value
+
 
 class DBConfig(object):
     db_name = "proxy"
     docs_name = "default"
 
     def __init__(self):
-        client = MongoClient(host=base_config.setting.get("db_host"), port=base_config.setting.get("db_port"), username=base_config.setting.get("db_user"), password=base_config.setting.get("db_pass"))
+        client = MongoClient(host=base_config.setting.get("db_host"), port=base_config.setting.get("db_port"),
+                             username=base_config.setting.get("db_user"), password=base_config.setting.get("db_pass"))
 
         self.db = client[self.db_name]
+
 
 class SettingConfig(DBConfig):
     db_name = "proxy"
     docs_name = "setting"
     default_config = dict(
-        verify_useful_proxy_concurrency = 200,
-        verify_useful_proxy_interval = 10,
+        verify_useful_proxy_concurrency=200,
+        verify_useful_proxy_interval=10,
 
-        fetch_new_proxy_concurrency = 200,
-        fetch_new_proxy_interval = 10,
+        fetch_new_proxy_concurrency=200,
+        fetch_new_proxy_interval=10,
 
         # clean proxy when number is positive
         # disable clean proxy when number is -1
-        hold_useful_proxy_number = -1,
+        hold_useful_proxy_number=-1,
     )
 
     def __init__(self):
@@ -99,15 +105,15 @@ class SettingConfig(DBConfig):
         self.reload_setting_from_db(**kwargs)
 
     def load_data_to_db(self):
-        for field, value  in self.default_config.items():
-            query = { "setting_name": field }
+        for field, value in self.default_config.items():
+            query = {"setting_name": field}
             if self.db[self.docs_name].find_one(query):
                 pass
             else:
                 data = dict(
-                    setting_name = field,
-                    setting_value = value,
-                    setting_state = True,
+                    setting_name=field,
+                    setting_value=value,
+                    setting_state=True,
                 )
 
                 self.db[self.docs_name].insert_one(data)
@@ -120,12 +126,13 @@ class SettingConfig(DBConfig):
         for item in cursor:
             if item["setting_state"]:
                 field = item["setting_name"]
-                value = item["setting_value"] 
+                value = item["setting_value"]
                 value = int(value) if is_number(value) else value
                 self.setting[field] = value
             else:
                 field = item["setting_name"]
                 self.setting[field] = None
+
 
 class FetcherConfig(DBConfig):
     db_name = "proxy"
@@ -142,13 +149,13 @@ class FetcherConfig(DBConfig):
 
     def update_fetcher_list(self, items):
         for item in items:
-            query = { "name": item }
+            query = {"name": item}
             if self.db[self.docs_name].find_one(query):
                 pass
             else:
                 data = dict(
-                    name = item,
-                    status = True,
+                    name=item,
+                    status=True,
                     succ=0,
                     fail=0,
                     skip=0,
@@ -176,6 +183,7 @@ class FetcherConfig(DBConfig):
         }
 
         self.db[self.docs_name].update(query, data)
+
 
 base_config = BaseConfig()
 setting_config = SettingConfig()

@@ -1,0 +1,19 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - /data/mongodb/:/data/
+    ports:
+      - "27017:27017"
+
+  proxy_pool:
+    image: 23233/proxy_manage
+    restart: always
+    ports:
+      - "35050:35050"
+      - "36050:36050"
+    links:
+      - "mongo:proxy_pool_db"
+    depends_on:
+      - mongo

@@ -2,9 +2,11 @@
 # !/usr/bin/env python
 
 from gevent import monkey, pool
+
 monkey.patch_all()
 
 import sys
+
 sys.path.append("Src")
 import time
 import threading
@@ -22,12 +24,13 @@ try:
 except:
     from queue import Queue  # py2
 
+
 # 这样的实现多线程有问题, 后期无法扩展到独立的机器上.
 # must call classmethod initQueue before
 class ProxyFetch(object):
     queue = Queue()
 
-    @classmethod 
+    @classmethod
     def initQueue(cls):
         fetchers = ProxyManager.proxy_manager.getExecFetcher()
         for fetcher in fetchers:
@@ -65,7 +68,7 @@ class ProxyFetch(object):
             for proxy in f.run():
                 proxy = proxy.strip()
                 if proxy and verifyProxyFormat(proxy) and \
-                not ProxyManager.proxy_manager.checkUsefulProxyExists(proxy):
+                        not ProxyManager.proxy_manager.checkUsefulProxyExists(proxy):
 
                     ProxyManager.proxy_manager.saveUsefulProxy(proxy)
                     succ = succ + 1
@@ -101,14 +104,13 @@ class ProxyFetch(object):
         ProxyManager.proxy_manager.updateFetcher(name, data)
         log.info("fetch [{name:^15}] proxy finish, \
             total:{total}, succ:{succ}, fail:{fail}, skip:{skip}, elapsed_time:{elapsed_time}s". \
-            format(name=name, total=total, succ=succ, fail=fail, skip=skip, elapsed_time=elapsed_time))
+                 format(name=name, total=total, succ=succ, fail=fail, skip=skip, elapsed_time=elapsed_time))
 
     def run(self):
         while self.queue.qsize():
             self.fetch()
 
 
-    
 if __name__ == "__main__":
     ProxyFetch.initQueue()
     t = ProxyFetch()
