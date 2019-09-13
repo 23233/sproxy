@@ -63,7 +63,7 @@ http://proxy.1again.cc:35050/api/v1/proxy/?region=!中国
 http://proxy.1again.cc:35050/api/v1/proxy/?https=1&type=2&region=中国
 ```
 
-4. [WEB页面的管理](http://proxy.1again.cc:35050/admin) 用户名:admin 密码:admin (尔敢乱动, 打洗雷啊!)
+4. [WEB页面的管理](http://proxy.1again.cc:35050/admin) 用户名:admin 密码:admin   (默认后台帐号密码：proxy:manage) (尔敢乱动, 打洗雷啊!)
 
 ![](Docs/images/2019-06-15-08-18-36.png)
 
