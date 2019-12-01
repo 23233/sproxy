@@ -82,14 +82,14 @@ class SettingConfig(DBConfig):
     docs_name = "setting"
     default_config = dict(
         verify_useful_proxy_concurrency=200,
-        verify_useful_proxy_interval=10,
+        verify_useful_proxy_interval=15,
 
         fetch_new_proxy_concurrency=200,
-        fetch_new_proxy_interval=10,
+        fetch_new_proxy_interval=15,
 
         # clean proxy when number is positive
         # disable clean proxy when number is -1
-        hold_useful_proxy_number=-1,
+        hold_useful_proxy_number=40000,
     )
 
     def __init__(self):
